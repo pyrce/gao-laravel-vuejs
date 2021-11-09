@@ -26,9 +26,13 @@ services:
       - db:mysqldb
     volumes:
       - .:/var/www
-  node:
-    build:
-      context: ./.docker/node
+  # node:
+  #   build:
+  #     context: .docker/node
+  #   container_name: gao-node
+  #   tty: true
+  #   volumes: 
+  #     - .docker/volumes/node:/home/node/app
   db:
     image: mysql:5.7
     container_name: gao-db

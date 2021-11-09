@@ -4,10 +4,9 @@
      <v-btn
         color="primary"
         dark
+        x-small
         @click.stop="dialog = true"
-      >
-      Ajout attribution
-      </v-btn>
+      >+</v-btn>
 
  <v-dialog
         v-model="dialog"
@@ -17,18 +16,8 @@
           <v-card-title class="headline">
            Ajout attribution
           </v-card-title>
-   <input placeholder="nom client" v-model="nomClient" v-on:input="searchClient">
-
-          <v-select
-          
-            label="clients"
-            :selected="selected"
-            item-text="nomClient" item-value="id"
-            :items="clients"
-            v-model="selected"
-          
-          ></v-select>
-     
+          <v-autocomplete :loading="loading" :items="clients" :search-input.sync="search" v-model="client" item-text="composed" return-object cache-items hide-no-data hide-details label="Sélection le client">
+             </v-autocomplete>
           <v-card-actions>
             <v-spacer></v-spacer>
 
@@ -37,7 +26,7 @@
               text
             @click="attribuer"
             >
-             +
+            Attribuer
             </v-btn>
 
           </v-card-actions>

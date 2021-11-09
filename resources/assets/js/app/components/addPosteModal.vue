@@ -5,7 +5,7 @@
         dark
         @click.stop="dialog = true"
       >
-        Open Dialog
+        Ajout poste
       </v-btn>
 
  <v-dialog

@@ -1,5 +1,5 @@
 <?php
-
+use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -10,6 +10,6 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::get('/', 'gestionController@liste');
-Route::get('/client/search', 'SearchClientsController@index');
+Route::get('/', function () {
+    return view('index');
+});

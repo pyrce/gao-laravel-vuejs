@@ -1,50 +1,61 @@
 import Axios from 'axios'
 import attributions from "../components/attributions.vue";
 import addAttribution from "../components/addAttribution.vue";
+import RemoveAttribution from "../components/RemoveAttribution.vue";
 export default {
-    name:"ordinateur",data(){ return{ heures:{}} },
+    name:"ordinateur",data(){ return{ horaires:{}} },
     props: {
-        ordinateurId: {
+        ordinateur: {
             default: function() {
-                return {}
-            }
-        },
-        ordinateurName: {
-            default: function () {
                 return {}
             }
         },date:{
             default: function () {
                 return {}
             }
-        },listeattributions:{
+        },attributions:{
             default: function () {
                 return {}
             }
         }
     },created(){
-this.initialize();
+        this.initialise();
     } ,methods:{
         affiche(){
             console.log("date:"+this.date);
             
         },
-     initialize(){
 
-        //this.listeattributions=[];
+        initialise() { 
+            this.ordinateur.attributions.forEach(attribution => {
+       
+                this.attributions[attribution.heure] = {
+                    id:attribution.id,
+                    nomClient: attribution.clients.nomClient,
+                    prenomClient: attribution.clients.prenomClient
+                };
+            });
+            this.buildHoraires();
+        },
+        buildHoraires() {
 
-        this.heures=["8","9","10","11","12","13","14","15","16","17","18"];
-   
-        Axios.get("/api/attributions",{data:{jour:this.date}}).then( data=>{
+            this.horaires = [];
 
-            this.listeattributions=data.data;
-           //this.$emit("reload-attr", this.listeattributions);
-     
-    });
-           
-     },test(){
-         console.log("test");
-     }
+            for (let i = 0; i < 10; i++) {
+                this.horaires.push({
+                    index: i + 8,
+                    attribution: (typeof this.attributions[i + 8] !== 'undefined') ? this.attributions[i + 8] : false
+                })
+            }
+
+
+        },   addAttribution: function (attribution) { console.log(attribution);
+            this.ordinateur.attributions.push(attribution)
+            this.initialise();
+        },removeAttribution: function(horaire){
+            _.unset(this.attributions,horaire)
+            this.buildHoraires();
+        }
     },
-    components:{attributions,addAttribution}
+    components:{attributions,addAttribution,RemoveAttribution}
 }

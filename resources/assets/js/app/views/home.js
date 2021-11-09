@@ -6,7 +6,7 @@ import addPosteModal from '../components/addPosteModal.vue';
 export default {
 name:"home",
  data(){
- return{listepostes:[],dialog:false,disabled:false,jour:"",listeattributions:{}};
+ return{listepostes:[],dialog:false,disabled:false,jour:"", date: new Date().toISOString().substr(0, 10),listeattributions:{}};
  },
     components: { ordinateur,addPosteModal },
     created(){
@@ -17,13 +17,10 @@ name:"home",
            
     },methods:{
         initialize(){
-            this.listepostes=[]
-                  Axios.get("/api/postes").then(({ data })=>{
-                      console.log("data")
-                      console.log(data)
-                    data.forEach(element => {
-                        this.listepostes.push(element);
-                    })
+          
+                  Axios.get("/api/postes",{ params: { date: this.date } }).then(({ data })=>{
+               
+                        this.listepostes=data.data
         })
 
 

@@ -1,58 +1,105 @@
-import Axios from "axios";
-export default{
-    name:"addAttribution",
-    event:"recharge",
-    props:{
-        heure:{
-            default: function () {
-                return {}
-            }
+import axios from 'axios';
+import _ from 'lodash';
+
+export default {
+    props: {
+        ordinateur: {
+            required: true
         },
-        postes:{
-            default: function () {
-                return {}
-            }
+        horaire: {
+            required: true
         },
-        clientId:{
-            default: function () {
-                return {}
-            }
+        date: {
+            required: true
+        },
+    },
+    components: {
+    },
+    data() {
+        return {
+            nom: '',
+            prenom: '',
+            ajouter: false,
+            client: {},
+            dialog: false,
+
+            //
+            loading: false,
+            search: null,
+            clients: [],
         }
     },
-    data () {
-        return {
-          dialog: false,nomClient:"",nom:"",form:{},selected:null,clients:[]
-        }
-      },computed:{
-      
-      },created(){
-     
-          
-      },methods:{
-          searchClient(){
-            //console.log(this.nomClient);
-            this.form.nom=this.nomClient;
-            if(this.nomClient.length>4){
-                Axios.get("/client/search",{params:{nom:this.nomClient} }).then( ({data})=>{this.clients=[];
-                    data.forEach(element => {
-                        this.clients.push({id:element.id,nomClient:element.nomClient+" - "+element.prenomClient });
-                        /*this.clients.nomClient=element.nomClient+" - "+element.prenomClient;
-                        this.clients.id=element.id;*/
+
+    created() {
+    },
+
+    watch: {
+
+        search: function (val) {
+            if (val && val.length >= 3) {
+
+                this.loading = true
+                axios.get('/api/clients', { params: { nomClient: val } })
+                    .then(({ data }) => {
+                        this.loading = false;
+                        data.forEach(client => {
+                            this.clients.push(this.formattedClient(client))
+                        });
+
+                    });
+            }
+        },
+    },
+    methods: {
+        init: function () {
+            this.nom = ''
+            this.prenom = ''
+            this.ajouter = false
+            this.client = {}
+        },
+
+        attribuer: function () {
+
+           if (this.isValid()) {
+                axios.post('/api/attributions', this.theClient())
+                    .then(({ data }) => {
+                        this.$emit('addAttribution', data.data)
+                        this.dialog = false
                     })
-                })
-            }console.log(clients);
-          },
-          attribuer(){
-            //  console.log("heure : "+this.heure+", poste : "+this.postes+" client :"+this.selected)
-              this.form.clientId=this.selected;
-              this.form.posteId=this.postes;
-              this.form.heure=this.heure;
-              Axios.post("/api/attributions",this.form ).then(data=>{
-                  console.log(data);
-                  this.dialog=false;
-                  this.$emit("recharge-vue");
-              })
-          }
-      }
-    
+                    .catch(error => {
+                        //TODO catch error
+                        console.log(error);
+                    });
+            }
+
+        },
+        theClient: function () {
+            return {
+
+                posteId: this.ordinateur.id,
+                jour: this.date,
+                heure: this.horaire,
+                clientId: _.isNumber(this.client.id) ? this.client.id : '',
+                nom: this.nom,
+                prenom: this.prenom,
+
+            };
+        },
+        formattedClient: function (client) {
+            return {
+                id: client.id,
+                nom: client.nomClient,
+                prenom: client.prenomClient,
+                composed: client.nomClient + " " + client.prenomClient
+            }
+        },
+        isValid() {
+            return !_.isEmpty(this.client) || (!_.isEmpty(this.nom) && !_.isEmpty(this.prenom))
+        }
+    },
+    computed: {
+        validate() {
+            return this.isValid()
+        }
+    }
 }

@@ -1,35 +1,42 @@
 <?php
 
 namespace App\Http\Controllers;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Foundation\Bus\DispatchesJobs;
-use Illuminate\Routing\Controller as BaseController;
-use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
-use Illuminate\Http\Request;
+use App\Http\Resources\PostesResource;
 use App\Postes;
-use App\Attributions;
-class GestionController extends BaseController
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+
+class GestionController extends Controller
 {
-    use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
-    public function liste(){
-        return view("index");
+    //
+
+    function index(Request $request)
+    {
+        $data = Validator::make(
+            $request->input(),
+            [
+                'date' => 'required|max:255',
+            ]
+        )->validate();
+        $ordis = Postes::with(['attributions' => function ($req) use ($data) {
+            $req->where('jour', '=', $data['date'])
+                ->with('client');
+        }])->get();
+
+        return PostesResource::collection($ordis);
     }
 
-    public function index(){
-        
-       $postes=Postes::get();
-       $attr=Attributions::get();
-   
-        return $postes;
+    function add(Request $request)
+    {
+
+        $data = $request->validate([
+            'date' => ['required','max:255'],
+        ]);
+
+        $ordi = new Postes();
+        $ordi->name = $data['name'];
+        $ordi->save();
+        return new PostesResource($ordi);
     }
-
-    public function store(Request $request){
-
-       $poste= Postes::create($request->all());
-        return $poste;
-    
-    }
-
 }

@@ -6,7 +6,7 @@
      
         <v-row>
             <v-col md='4' v-for='(ordinateur,key) in listepostes' :key='key'>
-                <ordinateur :ordinateurId='ordinateur.id' :date="jour" :ordinateurName='ordinateur.nomPoste'/>
+                <ordinateur :ordinateur="ordinateur" :date="date"> </ordinateur>
             </v-col>
         </v-row>
 

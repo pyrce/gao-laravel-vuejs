@@ -8,7 +8,5 @@ class Clients extends Model
 {
     //
     public $timestamps = false;
-    function attribution(){
-        return $this->hasMany('App\Attributions');
-    }
+
 }

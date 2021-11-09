@@ -11,8 +11,8 @@ class Attributions extends Model
         'clientId','posteId','heure','jour'
        ];
     public $timestamps = false;
-    public function clients(){
-        return $this->belongsTo('App\Clients','clientId');
+    public function client(){
+        return $this->belongsTo(Clients::class,'clientId');
     } 
     public function postes(){
         return $this->belongsTo('App\Postes','posteId');

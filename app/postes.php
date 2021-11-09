@@ -11,7 +11,7 @@ class Postes extends Model
     protected $fillable = [
      'nom'
     ];
-    function attribution(){
-        return $this->hasMany('App\Attributions');
+    function attributions(){
+        return $this->hasMany(Attributions::class, 'posteId');
     }
 }

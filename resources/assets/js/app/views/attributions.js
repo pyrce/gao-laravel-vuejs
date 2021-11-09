@@ -26,7 +26,7 @@ export default {
             }
         }
     },computed:{
-        init(){console.log("attr : ")
+        init(){
         console.log(this.listeattributions);
   } 
  },methods:{

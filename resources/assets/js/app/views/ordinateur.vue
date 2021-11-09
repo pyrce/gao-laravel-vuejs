@@ -1,30 +1,25 @@
-<template>
-    <v-card outlined>
-        <v-list>
-        <v-list-item three-line>
-            <v-list-item-content>
-                <v-list-item-title class="headline mb-1">
-                 
-                    {{ ordinateurName }}
 
-                    <v-row  v-for="(h,i) in heures" :key="i" class="horaire">
-                        <v-col cols="1">
-                   {{ h }}   h 
-  </v-col>
-  <v-col cols=9>
-                    <attributions :poste="ordinateurId" @reload-attr="initialize"  :listeattributions="listeattributions" :heure="h"/>
-          </v-col>         
-                    <v-col  cols="2">
-                           <addAttribution :postes="ordinateurId" :heure="h"/>       
-                    </v-col>
-              </v-row>
-          
-                </v-list-item-title>
-            </v-list-item-content>
-        </v-list-item>
-</v-list>
- 
-    </v-card>
+<template>
+<v-card>
+    <v-card-title>
+        {{ ordinateur.nomPoste }}
+    </v-card-title>
+    <v-card-text>
+        <v-row v-for="(horaire, key) in horaires" :key="key" class="horaire">
+            <v-col cols="2"> {{ horaire.index }}h</v-col>
+            <v-col cols="8">
+                <span v-if="horaire.attribution">
+                    {{ horaire.attribution.nomClient + " " + horaire.attribution.prenomClient }}
+                </span>
+            </v-col>
+            <v-col cols="2">
+               <RemoveAttribution v-if="horaire.attribution" :ordinateur="ordinateur" :attribution="horaire.attribution" :horaire="horaire.index"  />
+
+                <addAttribution v-if="!horaire.attribution" :ordinateur="ordinateur" :horaire="horaire.index" :date="date" />
+            </v-col>
+        </v-row>
+    </v-card-text>
+</v-card>
 </template>
 <style>
 .headline{

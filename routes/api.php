@@ -1,7 +1,12 @@
 <?php
 
 use Illuminate\Http\Request;
-use App\postes;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\ClientsController;
+use App\Http\Controllers\GestionController;
+use App\Http\Controllers\AttributionsController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -13,10 +18,26 @@ use App\postes;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::post('register', [UserController::class, 'store']);
+Route::post("login", [UserController::class, 'login']);
+
+
+
+    Route::prefix('postes')->group(function () {
+        Route::get("/", [GestionController::class, 'index']);
+        Route::post('/', [GestionController::class, 'store']);
+        Route::delete('/{id}', [GestionController::class, 'destroy']);
+    });
+
+    Route::prefix('clients')->group(function () {
+        Route::get("/", [ClientsController::class, 'index'])->name("client.index");
+        Route::post('/', [ClientsController::class, 'store']);
+    });
+
+    Route::prefix('attributions')->group(function () {
+        Route::post("/", [AttributionsController::class, 'store']);
+        Route::delete('/{id}', [AttributionsController::class, 'delete']);
+    });
+Route::group(['middleware' => 'auth:api'], function () {
+    Route::get("logout", [UserController::class, 'logout']);
 });
-//Route::apiResource('/postes','gestionController@index');
-Route::apiResource('/postes','GestionController');
-Route::apiResource('/clients','ClientsController');
-Route::apiResource('/attributions','AttributionsController');
